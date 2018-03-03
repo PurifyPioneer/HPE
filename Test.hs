@@ -1,4 +1,4 @@
-module Main where
+module Test where
 
 import Type
 import Subst
@@ -20,9 +20,3 @@ goal = [
     Comb "vater" [ Comb "Ingo" [], Var 0 ]
   ]
 test3 = sld (Prog prog) (Goal goal)
-
-main = print "test"
-
-
-
--- pretty listen

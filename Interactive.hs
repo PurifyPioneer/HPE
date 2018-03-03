@@ -8,6 +8,7 @@ import SLD
 import Pretty
 import Subst
 import Unify
+import Test
 
 -- TODO: wissen nur durch load oder auch mit input?
 
