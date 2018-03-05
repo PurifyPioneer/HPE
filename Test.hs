@@ -14,10 +14,10 @@ test1 = pretty (Comb "append" [ Var 0, Comb "." [ Var 1, Var 2 ], Comb "." [ Com
 test2 = pretty (compose (single 1 (Var 2)) (single 0 (Comb "f" [Var 1, Comb "true" []])))
 
 prog = [
-    Comb "vater" [ Comb "Ingo" [], Comb "Thomas" [] ] :- [],
-    Comb "vater" [ Comb "Ingo" [], Comb "Mirko" [] ] :- []
+    Comb "vater" [ Comb "ingo" [], Comb "thomas" [] ] :- [],
+    Comb "vater" [ Comb "ingo" [], Comb "mirko" [] ] :- []
   ]
 goal = [
-    Comb "vater" [ Comb "Ingo" [], Var 0 ]
+    Comb "vater" [ Comb "ingo" [], Var 0 ]
   ]
 test3 = sld (Prog prog) (Goal goal)

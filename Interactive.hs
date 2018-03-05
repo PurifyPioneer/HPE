@@ -3,7 +3,7 @@
 
 module Interactive (main) where
 
-import Data.List (intercalate, stripPrefix)
+import Data.List (intercalate, stripPrefix, nub, sort)
 import Type
 import Parser
 import SLD
@@ -19,7 +19,8 @@ main :: IO ()
 main = do
   putStrLn "Welcome to Prolog!"
   putStrLn "Type \":help\" for help."
-  loop dfs (Prog [])
+  loadFile dfs (Prog []) "test.pl" --debug autload
+  --loop dfs (Prog [])
   putStrLn "Halt!"
 
 loop :: Strategy -> Prog -> IO ()
@@ -31,26 +32,31 @@ loop strat prog = do
     (stripPrefix ":load " -> Just str) -> loadFile strat prog str
     (stripPrefix ":set "  -> Just str) -> setStrategy strat prog str
     ":help" -> do
-                help
-                loop strat prog
+      help
+      loop strat prog
     ":info" -> do
-                info prog
-                loop strat prog
+      info prog
+      loop strat prog
     ":quit" ->  return ()
-    goal    ->  exec strat prog goal
+    goal ->  do
+      exec strat prog goal
+      loop strat prog
 
 -- parse and exec prolog code
 exec :: Strategy -> Prog -> String -> IO ()
 exec strat prog input =
   case (parseWithVars input :: Either String (Goal, [(VarIndex, String)])) of
   Left err -> do
-    putStrLn ("Invalid input: " ++ err)
-    loop strat prog
+    putStrLn err
   Right (goal, vars) -> do
-    putStrLn ("your input: " ++ input)
+    putStrLn (show ((highestVar goal 0) + 1))
+    putStrLn ""
+    putStrLn (show (prog))
+    putStrLn ""
+    putStrLn (show (renameVars prog ((highestVar goal 0) + 1)))
+    putStrLn ""
     putStrLn (show (sld prog goal))
     printResult vars (solve strat prog goal)
-    loop strat prog
 
 -- prints a prolog result
 printResult :: [(VarIndex, String)] -> [Subst] -> IO ()
@@ -73,11 +79,11 @@ help = do
 
 
 -- print all available predicates
--- TODO: sort alphabetically
 info :: Prog -> IO ()
 info (Prog rules) = do
   putStrLn "Available predicates:"
-  putStrLn (intercalate "\n" (map infoHelper rules))
+  -- intercalate with new lines and remove doubles
+  putStrLn (intercalate "\n" (sort (nub (map infoHelper rules))))
   where
     infoHelper :: Rule -> String
     infoHelper (Comb str terms :- _) = str ++ "/" ++ show (length terms)

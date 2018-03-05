@@ -1,4 +1,4 @@
-module Subst (empty, single, apply, compose) where
+module Subst (Subst (..), empty, single, apply, compose) where
 
 import Type
 
@@ -15,8 +15,9 @@ single i term = Subst [(i, term)]
 apply :: Subst -> Term -> Term
 apply (Subst []) term = term
 apply (Subst ((index, termReplace):xs)) (Var i) =
-  if index == i then termReplace
-  else apply (Subst xs) (Var i)
+  if index == i
+    then termReplace
+    else apply (Subst xs) (Var i)
 apply subst (Comb str terms) = Comb str (map (apply subst) terms)
 
 compose :: Subst -> Subst -> Subst

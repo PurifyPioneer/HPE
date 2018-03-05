@@ -5,15 +5,8 @@ import Subst
 import Type
 
 -- Tiefensuche
-{-
-
-
-
--}
 dfs :: Strategy
 dfs (Node goal branches) = []
-
-
 
 -- Breitensuche
 bfs :: Strategy
