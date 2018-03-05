@@ -5,6 +5,7 @@ import Subst
 import Pretty
 import Unify
 import SLD
+import Parser
 
 -- "append(A, [B|C], [1, 2])"
 test1 = pretty (Comb "append" [ Var 0, Comb "." [ Var 1, Var 2 ], Comb "." [ Comb "1" [], Comb "." [ Comb "2" [], Comb "[]" []]]])

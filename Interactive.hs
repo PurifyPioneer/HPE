@@ -1,4 +1,6 @@
 {-# LANGUAGE ViewPatterns #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Interactive where
 
 import Data.List (intercalate, stripPrefix)
@@ -39,15 +41,14 @@ loop strat prog = do
 -- parse and exec prolog code
 exec :: Strategy -> Prog -> String -> IO ()
 exec strat prog input =
-  loop strat prog
---  case parseWithVars input of
---  Left err -> do
---    putStrLn ("Invalid input: " ++ err)
---    loop strat prog
---  Right (goal, list) -> do
---    putStrLn "Toll: "
---    loop strat prog
-----      printResult output (solve strat prog goal)
+  case (parseWithVars input :: Either String (Goal, [(VarIndex, String)])) of
+  Left err -> do
+    putStrLn ("Invalid input: " ++ err)
+    loop strat prog
+  Right (goal, list) -> do
+    putStrLn ("your input: " ++ input)
+--    printResult output (solve strat prog goal)
+    loop strat prog
 
 -- print help message
 help :: IO ()

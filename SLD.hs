@@ -34,8 +34,10 @@ renameVars (Prog rules) highest = Prog (renameRuleVars rules highest)
     renameRuleVars :: [Rule] -> Int -> [Rule]
     renameRuleVars [] _ = []
     renameRuleVars ((term :- terms):restRules) highest =
-      ((head (renameTermVars [term] highest)) :- (renameTermVars terms highest)) :
-      (renameRuleVars restRules highest)
+      (
+        (head (renameTermVars [term] highest)) :-
+        (renameTermVars terms highest)
+      ) : (renameRuleVars restRules highest)
     renameTermVars :: [Term] -> Int -> [Term]
     renameTermVars [] _ = []
     renameTermVars ((Var i):restTerms) highest =
