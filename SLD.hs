@@ -1,4 +1,4 @@
-module SLD where
+module SLD (sld) where
 
 import Type
 import Subst
@@ -54,11 +54,3 @@ highestVar (Goal ((Var i):restTerms)) j =
   if i > j
     then highestVar (Goal restTerms) i
     else highestVar (Goal restTerms) j
-
-dfs :: Strategy
-dfs (Node goal branches) = []
-
-bfs :: Strategy
-bfs (Node goal branches) = []
-
---solve :: Strategy -> Prog -> Goal -> [Subst]

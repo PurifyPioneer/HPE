@@ -1,12 +1,13 @@
 {-# LANGUAGE ViewPatterns #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Interactive where
+module Interactive (main) where
 
 import Data.List (intercalate, stripPrefix)
 import Type
 import Parser
 import SLD
+import SLDSearch
 import Pretty
 import Subst
 import Unify
@@ -45,10 +46,18 @@ exec strat prog input =
   Left err -> do
     putStrLn ("Invalid input: " ++ err)
     loop strat prog
-  Right (goal, list) -> do
+  Right (goal, vars) -> do
     putStrLn ("your input: " ++ input)
---    printResult output (solve strat prog goal)
+    putStrLn (show (sld prog goal))
+    printResult vars (solve strat prog goal)
     loop strat prog
+
+-- prints a prolog result
+printResult :: [(VarIndex, String)] -> [Subst] -> IO ()
+printResult vars [] = return ()
+printResult vars (subst:xs) = do
+  putStrLn (prettyWithVars vars subst)
+  printResult vars xs
 
 -- print help message
 help :: IO ()

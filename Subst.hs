@@ -1,4 +1,4 @@
-module Subst where
+module Subst (empty, single, apply, compose) where
 
 import Type
 

@@ -1,4 +1,4 @@
-module Unify where
+module Unify (unify) where
 
 import Data.Maybe (isNothing)
 import Type

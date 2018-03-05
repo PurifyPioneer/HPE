@@ -1,4 +1,4 @@
-module Pretty where
+module Pretty (Pretty (..)) where
 
 import Data.Char (chr)
 import Data.List (intercalate, find)
@@ -22,7 +22,7 @@ instance Pretty Term where
           -- after Z comes A1, B1, ..., Z1, A2
           else chr (65 + (i `mod` 26)) : show (i `div` 26)
 
-  prettyWithVars vars (Comb "." [x, (Comb "[]" [])]) = "[" ++ pretty x ++ "]"
+  prettyWithVars vars (Comb "." [x, (Comb "[]" [])]) = "[" ++ prettyWithVars vars x ++ "]"
   prettyWithVars vars (Comb "." [x, term@(Comb "." y)]) =
     "[" ++ prettyWithVars vars x ++ ", "
     -- deletes first and last list element, in our case parentheses
