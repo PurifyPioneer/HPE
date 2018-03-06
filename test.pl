@@ -1,11 +1,14 @@
 %! vater(vater,kind)
+vater(herbert, hans).
 vater(klaus, herbert).
-vater(rudolf, obama).
+vater(rudolf, klaus).
 vater(manni, thomas).
 vater(manni, obama).
 vater(obama, lincoln).
 %! grossvater(grossvater, enkel)
 grossvater(X, Z) :- vater(X, Y), vater(Y, Z).
+%! sohn(sohn,vater)
+sohn(X, Y) :- vater(Y, X).
 
 %! p(X,Z) :- q(X,Y), p(Y,Z).
 %! p(X,X).

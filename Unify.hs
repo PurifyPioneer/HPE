@@ -1,4 +1,4 @@
-module Unify (unify) where
+module Unify (unify, varInTerm) where
 
 import Data.Maybe (isNothing)
 import Type
@@ -35,9 +35,7 @@ unifyHelper term1 term2 subst =
     Nothing -> Just subst
     --
     Just (Var i, Var j) ->
-      if i == j
-        then Nothing
-        else Just (single i (Var j)) -- ^ create a single substitutuion
+      unifyHelper term1 term2 (compose (single i (Var j)) subst) -- ^ create a single substitutuion
     Just (Comb str1 terms1, Comb str2 terms2) -> Nothing
     Just (Var i, term@(Comb str terms)) ->
       if varInTerm i terms

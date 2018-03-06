@@ -1,4 +1,4 @@
-module SLD (SLDTree (..), Strategy, sld, highestVar, renameVars) where
+module SLD (SLDTree (..), sld, highestVar, renameVars) where
 
 import Type
 import Subst
@@ -7,30 +7,31 @@ import Unify
 data SLDTree = Node Goal [(Subst, SLDTree)]
   deriving Show
 
-type Strategy = SLDTree -> [Subst]
-
 -- | Creates an sld tree for a given program and request(goal)
 sld :: Prog -> Goal -> SLDTree
 sld (Prog []) goal = Node goal [] -- ^ Empty program gives empty tree
 sld prog goal@(Goal []) = Node goal [] -- ^ Empty goal gives empty tree
-sld prog goal = Node goal (createBranches (renameVars prog ((highestVar goal 0) + 1)) goal)
+sld prog goal = sldHelper (renameVars prog ((highestVar goal 0) + 1)) goal
+  where
+    sldHelper :: Prog -> Goal -> SLDTree
+    sldHelper prog goal = Node goal (createBranches prog prog goal)
 
-createBranches :: Prog -> Goal -> [(Subst, SLDTree)]
-createBranches (Prog []) _ = [] -- ^ End of recursion if there a no rules left
-createBranches  -- ^ Create tree branch
-  -- ^ Get first rule of ruleset when ruleset is all rules of our
-  -- porgram we haven't applied yet.
-  prog@(Prog ((rule :- literals):restRules))
-  -- TODO: comment
+createBranches :: Prog -> Prog -> Goal -> [(Subst, SLDTree)]
+createBranches _ (Prog []) _ = [] -- ^ End of recursion if there a no rules left
+createBranches _ _ (Goal []) = []
+-- ^ Create tree branch
+-- ^ Get first rule of ruleset when ruleset is all rules of our
+-- porgram we haven't applied yet.
+createBranches fullProg prog@(Prog ((rule :- literals):restRules))
   goal@(Goal (firstGoal:restGoals)) =
     -- ^ Try to unify a rule with a goal
     case unify rule firstGoal of
       -- ^ If rule could not be applied, try to applie rest rules to same goal.
-      Nothing  -> createBranches (Prog restRules) goal
-      Just mgu -> (mgu, sld prog (Goal (map (apply mgu)
-                    (literals ++ restGoals)))
-                  )
-                  : createBranches (Prog restRules) goal
+      Nothing  -> createBranches fullProg (Prog restRules) goal
+      Just mgu ->
+        --TODO: hier fehler, dass goal im zweiten schritt leer !
+        (mgu, sld fullProg (Goal (map (apply mgu) (literals ++ restGoals)))) :
+        createBranches fullProg (Prog restRules) goal
 
 renameVars :: Prog -> Int -> Prog
 renameVars (Prog rules) highest = Prog (renameRuleVars rules highest)

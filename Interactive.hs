@@ -3,6 +3,7 @@
 
 module Interactive (main) where
 
+import System.IO
 import Data.List (intercalate, stripPrefix, nub, sort)
 import Type
 import Parser
@@ -12,8 +13,6 @@ import Pretty
 import Subst
 import Unify
 import Test
-
--- TODO: wissen nur durch load oder auch mit input?
 
 main :: IO ()
 main = do
@@ -25,6 +24,7 @@ main = do
 
 loop :: Strategy -> Prog -> IO ()
 loop strat prog = do
+  hSetBuffering stdin LineBuffering
   putStr "?- "
   input <- getLine
   case input of
@@ -49,13 +49,6 @@ exec strat prog input =
   Left err -> do
     putStrLn err
   Right (goal, vars) -> do
-    putStrLn (show ((highestVar goal 0) + 1))
-    putStrLn ""
-    putStrLn (show (prog))
-    putStrLn ""
-    putStrLn (show (renameVars prog ((highestVar goal 0) + 1)))
-    putStrLn ""
-    putStrLn (show (sld prog goal))
     printResult vars (solve strat prog goal)
 
 -- prints a prolog result
@@ -65,7 +58,7 @@ printResult vars (subst:xs) = do
   putStrLn (prettyWithVars vars subst)
   printResult vars xs
 
--- print help message
+-- prints help message
 help :: IO ()
 help = do
   putStrLn "Commands available from the prompt:"
