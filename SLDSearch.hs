@@ -18,9 +18,20 @@ dfs strat = dfsHelper empty strat
       (dfsHelper (compose mgu subst) sldTree) ++
       (dfsHelper subst (Node goal restBranches))
 
+--https://stackoverflow.com/questions/15175543/writing-pop-and-push-functions-for-haskell-stack
+push :: SLDTree -> [SLDTree] -> [SLDTree]
+push sldTree stack = sldTree:stack
+
+pop :: [SLDTree] -> (SLDTree, [SLDTree])
+pop [] = ()        -- can't pop emty stack
+pop (x:stack) = (x, stack) -- return first stack element and new stack
+
 -- breadth first search
 bfs :: Strategy
-bfs (Node goal branches) = []
+bfs = bfsHelper empty
+  where bfsHelper :: Subst -> Strategy
+
+
 
 solve :: Strategy -> Prog -> Goal -> [Subst]
 solve strat prog goal = solveHelper (strat (sld prog goal)) goal

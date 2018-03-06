@@ -1,5 +1,5 @@
 %! vater(vater,kind)
-vater(herbert, hans).
+vater(herbert, hans). %! TODO: vater(herbert, hans) gives no output
 vater(klaus, herbert).
 vater(rudolf, klaus).
 vater(manni, thomas).
