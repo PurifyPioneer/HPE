@@ -22,13 +22,23 @@ goal = [
   ]
 test3 = sld (Prog prog) (Goal goal)
 
+<<<<<<< HEAD
 term1 = (Comb "append" [Var 0, Var 1, Comb "." [Comb "1" [], Comb "." [Comb "2" [], Comb "[]" []]]])
+=======
+term1 = (Comb "append" [Var 0,Var 1,Comb "." [Comb "1" [],Comb "." [Comb "2" [],Comb "[]" []]]])
+>>>>>>> c47fa046daa86ba06713e2cf144dc5aef9d426d3
 term2 = (Comb "append" [Comb "." [Var 2,Var 3], (Var 4), Comb "." [Var 2, Var 5]])
 
 testAppend = unify term1 term2
 -- TODO: tets agreement set and compose
+<<<<<<< HEAD
 -- gives nothing
 
 testDS = ds (apply empty term1) (apply empty term2)
 -- gives: Just (Var 0,Comb "." [Var 2,Var 3])
 -- TODO: ds set seems right check unify.
+=======
+
+
+testDS = ds (apply empty term1) (apply empty term2)
+>>>>>>> c47fa046daa86ba06713e2cf144dc5aef9d426d3
