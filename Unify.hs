@@ -1,4 +1,4 @@
-module Unify (unify, varInTerm) where
+module Unify (ds, unify, varInTerm) where
 
 import Data.Maybe (isNothing)
 import Type
@@ -39,7 +39,7 @@ unifyHelper term1 term2 subst =
     Just (Comb str1 terms1, Comb str2 terms2) -> Nothing
     Just (Var i, term@(Comb str terms)) ->
       if varInTerm i terms
-        then Nothing
+        then Nothing -- TODO: disagreementSet takes this case
         else unifyHelper term1 term2 (compose (single i term) subst)
     Just (term@(Comb str terms), Var i) ->
       if varInTerm i terms

@@ -5,7 +5,7 @@ import Subst
 import Pretty
 import Unify
 import SLD
-import Parser
+--import Parser
 
 -- "append(A, [B|C], [1, 2])"
 test1 = pretty (Comb "append" [ Var 0, Comb "." [ Var 1, Var 2 ], Comb "." [ Comb "1" [], Comb "." [ Comb "2" [], Comb "[]" []]]])
@@ -22,5 +22,13 @@ goal = [
   ]
 test3 = sld (Prog prog) (Goal goal)
 
-testappend = unify (Comb "append" [Var 0,Var 1,Comb "." [Comb "1" [],Comb "." [Comb "2" [],Comb "[]" []]]]) (Comb "append" [Comb "." [Var 2,Var 3], (Var 4), Comb "." [Var 2, Var 5]])
-TODO: tets agreement set and compose
+term1 = (Comb "append" [Var 0, Var 1, Comb "." [Comb "1" [], Comb "." [Comb "2" [], Comb "[]" []]]])
+term2 = (Comb "append" [Comb "." [Var 2,Var 3], (Var 4), Comb "." [Var 2, Var 5]])
+
+testAppend = unify term1 term2
+-- TODO: tets agreement set and compose
+-- gives nothing
+
+testDS = ds (apply empty term1) (apply empty term2)
+-- gives: Just (Var 0,Comb "." [Var 2,Var 3])
+-- TODO: ds set seems right check unify.
