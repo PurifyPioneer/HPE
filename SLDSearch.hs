@@ -21,16 +21,23 @@ dfs strat = dfsHelper empty strat
 --https://stackoverflow.com/questions/15175543/writing-pop-and-push-functions-for-haskell-stack
 push :: SLDTree -> [SLDTree] -> [SLDTree]
 push sldTree stack = sldTree:stack
-
-pop :: [SLDTree] -> (SLDTree, [SLDTree])
-pop [] = ()        -- can't pop emty stack
-pop (x:stack) = (x, stack) -- return first stack element and new stack
+--
+--pop :: [SLDTree] -> (SLDTree, [SLDTree])
+--pop [] = ()        -- can't pop emty stack
+--pop (x:stack) = (x, stack) -- return first stack element and new stack
 
 -- breadth first search
 bfs :: Strategy
-bfs = bfsHelper empty
-  where bfsHelper :: Subst -> Strategy
+bfs tree = workQueue [(empty, tree)]
 
+workQueue :: [(Subst,SLDTree)] -> [Subst]
+workQueue [] = []
+workQueue ((subst,tree):qs) = case tree of
+                                     Node (Goal []) [] -> subst : workQueue qs
+                                     Node g []         -> workQueue qs
+                                     -- Der betrachtete Knoten hat Kinder, welche mit veränderten Substitutionen in die Queue gepackt werden.
+                                     -- Anschließend wird die Queue weiter abgearbeitet
+                                     Node g kinder     -> workQueue (qs ++ (map (\ (substKind, treeKind ) -> (compose substKind subst, treeKind) ) kinder))
 
 
 solve :: Strategy -> Prog -> Goal -> [Subst]

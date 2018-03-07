@@ -18,8 +18,8 @@ main :: IO ()
 main = do
   putStrLn "Welcome to Prolog!"
   putStrLn "Type \":help\" for help."
-  loadFile dfs (Prog []) "test.pl" --debug autload
-  --loop dfs (Prog [])
+  --loadFile dfs (Prog []) "test.pl" -- TODO:debug autload
+  loop dfs (Prog [])
   putStrLn "Halt!"
 
 loop :: Strategy -> Prog -> IO ()
@@ -49,6 +49,7 @@ exec strat prog input =
   Left err -> do
     putStrLn err
   Right (goal, vars) -> do
+    putStrLn (show (sld prog goal))
     printResult vars (solve strat prog goal)
 
 -- prints a prolog result
