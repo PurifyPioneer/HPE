@@ -35,7 +35,7 @@ workQueue [] = []
 workQueue ((subst,tree):qs) = case tree of
                                      Node (Goal []) [] -> subst : workQueue qs
                                      Node g []         -> workQueue qs
-                                     -- Der betrachtete Knoten hat Kinder, welche mit veränderten Substitutionen in die Queue gepackt werden.
+                        -- TODO:change komments             -- Der betrachtete Knoten hat Kinder, welche mit veränderten Substitutionen in die Queue gepackt werden.
                                      -- Anschließend wird die Queue weiter abgearbeitet
                                      Node g kinder     -> workQueue (qs ++ (map (\ (substKind, treeKind ) -> (compose substKind subst, treeKind) ) kinder))
 

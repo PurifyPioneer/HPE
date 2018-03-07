@@ -23,3 +23,4 @@ goal = [
 test3 = sld (Prog prog) (Goal goal)
 
 testappend = unify (Comb "append" [Var 0,Var 1,Comb "." [Comb "1" [],Comb "." [Comb "2" [],Comb "[]" []]]]) (Comb "append" [Comb "." [Var 2,Var 3], (Var 4), Comb "." [Var 2, Var 5]])
+TODO: tets agreement set and compose
