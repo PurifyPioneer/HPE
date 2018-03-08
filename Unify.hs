@@ -20,9 +20,12 @@ ds (Comb str1 terms1) (Comb str2 terms2) =
 dsList :: [Term] -> [Term] -> Maybe (Term, Term)
 dsList [] [] = Nothing
 dsList (t1:ts1) (t2:ts2) =
-  if isNothing (ds t1 t2)
-    then dsList ts1 ts2
-    else Just(t1, t2)
+		case ds t1 t2 of
+			Nothing -> dsList ts1 ts2
+			x				-> x
+--  if isNothing (ds t1 t2)
+--		then dsList ts1 ts2
+--    else Just(t1, t2)
 
 unify :: Term -> Term -> Maybe Subst
 unify term1 term2 = unifyHelper term1 term2 empty
