@@ -23,7 +23,7 @@ dsList (t1:ts1) (t2:ts2) =
     Nothing -> dsList ts1 ts2
     x       -> x
 dsList _ _ = error "Should not have happened!"
--- TODO: fix tabs
+
 
 unify :: Term -> Term -> Maybe Subst
 unify term1 term2 = unifyHelper term1 term2 empty
