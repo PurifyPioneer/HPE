@@ -39,7 +39,7 @@ loop strat prog = do
       info prog
       loop strat prog
     ":quit" ->  return ()
-    goal ->  do
+    goal    ->  do
       exec strat prog goal  -- ^ Executes a given goal.
       putStrLn "No"         -- ^ Indicate that there are no more soloutions.
       loop strat prog       -- ^ Continues with loop when goal is finished.
@@ -48,7 +48,7 @@ loop strat prog = do
 exec :: Strategy -> Prog -> String -> IO ()
 exec strat prog input =
   case (parseWithVars input :: Either String (Goal, [(VarIndex, String)])) of
-  Left err -> do
+  Left err           -> do
     putStrLn err  -- ^ Print error if request could not be parsed.
   Right (goal, vars) -> do
     --putStrLn (show (sld prog goal)) -- ^ Debug: print out SLDTree
@@ -56,7 +56,7 @@ exec strat prog input =
 
 -- | Prints a prolog result
 printResult :: [(VarIndex, String)] -> [Subst] -> IO ()
-printResult _ [] = return ()
+printResult _    []         = return ()
 printResult vars (subst:xs) = do
   putStrLn (prettyWithVars vars subst) -- ^ Print a single result.
   _ <- getLine                         -- ^ Used to print one result at a time.
@@ -74,7 +74,6 @@ help = do
   putStrLn "  :set <strat>  Sets the specified search strategy"
   putStrLn "                where <strat> is one of 'dfs' or 'bfs'."
 
-
 -- | Print all available predicates.
 info :: Prog -> IO ()
 info (Prog rules) = do
@@ -85,7 +84,7 @@ info (Prog rules) = do
     -- | String representation of a rule including the number of arguments.
     infoHelper :: Rule -> String
     infoHelper (Comb str terms :- _) = str ++ "/" ++ show (length terms)
-    infoHelper _ = ""
+    infoHelper _                     = ""
 
 -- | Load program from file
 loadFile :: Strategy -> Prog -> String -> IO ()
@@ -93,12 +92,12 @@ loadFile strat prog name =
   do
     file <- parseFile name
     case file of
-      Left  err  -> do
+      Left  err     -> do
         putStrLn ("Error in file loading: " ++ err)
-        loop strat prog -- ^ Continue loop with old program
+        loop strat prog  -- ^ Continue loop with old program
       Right newProg -> do
         putStrLn "File successfully loaded."
-        loop strat newProg -- ^ Continue loop with newly loaded program
+        loop strat newProg  -- ^ Continue loop with newly loaded program
 
 -- | Set search strategy
 setStrategy :: Strategy -> Prog -> String -> IO ()
@@ -110,6 +109,6 @@ setStrategy strat prog input =
     "dfs" -> do
       putStrLn "Now using depth first search strategy."
       loop dfs prog -- ^ Continue loop with dfs.
-    _ -> do
+    _     -> do
       putStrLn "Invalid Strategy! Use bfs or dfs."
       loop strat prog -- ^ Continue loop with old strategy
