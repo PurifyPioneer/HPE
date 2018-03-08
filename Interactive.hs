@@ -58,7 +58,7 @@ exec strat prog input =
 printResult :: [(VarIndex, String)] -> [Subst] -> IO ()
 printResult _    []         = return ()
 printResult vars (subst:xs) = do
-  putStrLn (prettyWithVars vars subst) -- ^ Print a single result.
+  putStr (prettyWithVars vars subst) -- ^ Print a single result.
   _ <- getLine                         -- ^ Used to print one result at a time.
   printResult vars xs                  -- ^ Print all further results.
 
