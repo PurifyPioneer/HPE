@@ -1,7 +1,7 @@
 module Unify (unify, varInTerm) where
 
-import Type
 import Subst
+import Type
 
 -- | claculate the disagreement set of two terms
 ds :: Term -> Term -> Maybe (Term, Term)

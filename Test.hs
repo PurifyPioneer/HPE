@@ -1,8 +1,8 @@
 module Test where
 
-import Type
-import Subst
 import Pretty
+import Subst
+import Type
 --import Unify
 --import SLD
 --import Parser

@@ -2,8 +2,9 @@ module Pretty (Pretty (..)) where
 
 import Data.Char (chr)
 import Data.List (intercalate)
-import Type
+
 import Subst
+import Type
 
 -- | Typeclass for pretty printing
 class Pretty a where
