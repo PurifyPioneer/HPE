@@ -15,7 +15,7 @@ sld prog goal = sldHelper (renameVars prog (highestVar goal 0 + 1)) goal
   where
     -- TODO: fix shadowing
     sldHelper :: Prog -> Goal -> SLDTree
-    sldHelper prog goal = Node goal (createBranches prog prog goal)
+    sldHelper prog1 goal1 = Node goal (createBranches prog1 prog1 goal1)
 
 createBranches :: Prog -> Prog -> Goal -> [(Subst, SLDTree)]
 createBranches _ (Prog []) _ = [] -- ^ End of recursion if there a no rules left
@@ -39,18 +39,18 @@ renameVars (Prog rules) highest = Prog (renameRuleVars rules highest)
   where
     renameRuleVars :: [Rule] -> Int -> [Rule]
     renameRuleVars [] _ = []
-    renameRuleVars ((term :- terms):restRules) highest =
+    renameRuleVars ((term :- terms):restRules) highest1 =
       (
-        head (renameTermVars [term] highest) :-
-        (renameTermVars terms highest)
-      ) : renameRuleVars restRules highest
+        head (renameTermVars [term] highest1) :-
+        (renameTermVars terms highest1)
+      ) : renameRuleVars restRules highest1
     renameTermVars :: [Term] -> Int -> [Term]
     renameTermVars [] _ = []
-    renameTermVars ((Var i):restTerms) highest =
-      (Var (i + highest)):(renameTermVars restTerms highest)
-    renameTermVars ((Comb str terms):restTerms) highest =
-      (Comb str (renameTermVars terms highest)) :
-      (renameTermVars restTerms highest)
+    renameTermVars ((Var i):restTerms) highest1 =
+      (Var (i + highest1)):(renameTermVars restTerms highest1)
+    renameTermVars ((Comb str terms):restTerms) highest1 =
+      (Comb str (renameTermVars terms highest1)) :
+      (renameTermVars restTerms highest1)
 
 highestVar :: Goal -> Int -> Int
 highestVar (Goal []) j = j -- ^ for empty goal highest variable is input(ex.: 0)
