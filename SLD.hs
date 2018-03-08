@@ -10,9 +10,10 @@ data SLDTree = Node Goal [(Subst, SLDTree)]
 -- | Creates an sld tree for a given program and request(goal)
 sld :: Prog -> Goal -> SLDTree
 sld (Prog []) goal = Node goal [] -- ^ Empty program gives empty tree
-sld prog goal@(Goal []) = Node goal [] -- ^ Empty goal gives empty tree
-sld prog goal = sldHelper (renameVars prog ((highestVar goal 0) + 1)) goal
+sld _ goal@(Goal []) = Node goal [] -- ^ Empty goal gives empty tree
+sld prog goal = sldHelper (renameVars prog (highestVar goal 0 + 1)) goal
   where
+    -- TODO: fix shadowing
     sldHelper :: Prog -> Goal -> SLDTree
     sldHelper prog goal = Node goal (createBranches prog prog goal)
 
@@ -22,7 +23,7 @@ createBranches _ _ (Goal []) = []
 -- ^ Create tree branch
 -- ^ Get first rule of ruleset when ruleset is all rules of our
 -- porgram we haven't applied yet.
-createBranches fullProg prog@(Prog ((rule :- literals):restRules))
+createBranches fullProg (Prog ((rule :- literals):restRules))
   goal@(Goal (firstGoal:restGoals)) =
     -- ^ Try to unify a rule with a goal
     case unify rule firstGoal of
@@ -40,9 +41,9 @@ renameVars (Prog rules) highest = Prog (renameRuleVars rules highest)
     renameRuleVars [] _ = []
     renameRuleVars ((term :- terms):restRules) highest =
       (
-        (head (renameTermVars [term] highest)) :-
+        head (renameTermVars [term] highest) :-
         (renameTermVars terms highest)
-      ) : (renameRuleVars restRules highest)
+      ) : renameRuleVars restRules highest
     renameTermVars :: [Term] -> Int -> [Term]
     renameTermVars [] _ = []
     renameTermVars ((Var i):restTerms) highest =

@@ -25,8 +25,9 @@ compose s1 (Subst []) = s1
 compose (Subst []) s2 = s2
 compose (Subst s1) (Subst s2) =
   Subst (
-    (map (\(index, term) -> (index, apply (Subst s1) term)) s2) ++
-    (filter (\ (index, term) -> notElem index (dom (Subst s2))) s1)
+    map (\(index, term) -> (index, apply (Subst s1) term)) s2 ++
+    -- TODO: -Wall: "term" not used
+    filter (\(index, _) -> notElem index (dom (Subst s2))) s1
   )
 
 dom :: Subst -> [VarIndex]

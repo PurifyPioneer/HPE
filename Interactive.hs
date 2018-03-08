@@ -3,25 +3,26 @@
 
 module Interactive (main) where
 
-import System.IO
 import Data.List (intercalate, stripPrefix, nub, sort)
-import Type
-import Parser
-import SLD
-import SLDSearch
-import Pretty
-import Subst
-import Unify
-import Test
+import System.IO
 
+import Parser
+import Pretty
+import SLDSearch
+import Subst
+import Type
+
+-- | Main entry point of program.
 main :: IO ()
 main = do
   putStrLn "Welcome to Prolog!"
   putStrLn "Type \":help\" for help."
-  --loadFile dfs (Prog []) "test.pl" -- TODO:debug autload
-  loop dfs (Prog [])
+  --loadFile dfs (Prog []) "test.pl"  -- ^ Used to load a file for easier debug.
+  loop dfs (Prog [])                  -- ^ Start loop with empty program and
+                                      -- ^ dfs as default strategy.
   putStrLn "Halt!"
 
+-- | Loop  executing the program logic like getting input and executing goals.
 loop :: Strategy -> Prog -> IO ()
 loop strat prog = do
   hSetBuffering stdin LineBuffering
@@ -39,27 +40,29 @@ loop strat prog = do
       loop strat prog
     ":quit" ->  return ()
     goal ->  do
-      exec strat prog goal
-      loop strat prog
+      exec strat prog goal  -- ^ Executes a given goal.
+      putStrLn "No"         -- ^ Indicate that there are no more soloutions.
+      loop strat prog       -- ^ Continues with loop when goal is finished.
 
--- parse and exec prolog code
+-- | Parses and executes a goal
 exec :: Strategy -> Prog -> String -> IO ()
 exec strat prog input =
   case (parseWithVars input :: Either String (Goal, [(VarIndex, String)])) of
   Left err -> do
-    putStrLn err
+    putStrLn err  -- ^ Print error if request could not be parsed.
   Right (goal, vars) -> do
-    putStrLn (show (sld prog goal))
-    printResult vars (solve strat prog goal)
+    --putStrLn (show (sld prog goal)) -- ^ Debug: print out SLDTree
+    printResult vars (solve strat prog goal) -- ^ Print the result of the goal.
 
--- prints a prolog result
+-- | Prints a prolog result
 printResult :: [(VarIndex, String)] -> [Subst] -> IO ()
-printResult vars [] = return ()
+printResult _ [] = return ()
 printResult vars (subst:xs) = do
-  putStrLn (prettyWithVars vars subst)
-  printResult vars xs
+  putStrLn (prettyWithVars vars subst) -- ^ Print a single result.
+  _ <- getLine                         -- ^ Used to print one result at a time.
+  printResult vars xs                  -- ^ Print all further results.
 
--- prints help message
+-- | Prints an overview of all available functions the program offers.
 help :: IO ()
 help = do
   putStrLn "Commands available from the prompt:"
@@ -72,18 +75,19 @@ help = do
   putStrLn "                where <strat> is one of 'dfs' or 'bfs'."
 
 
--- print all available predicates
+-- | Print all available predicates.
 info :: Prog -> IO ()
 info (Prog rules) = do
   putStrLn "Available predicates:"
   -- intercalate with new lines and remove doubles
   putStrLn (intercalate "\n" (sort (nub (map infoHelper rules))))
   where
+    -- | String representation of a rule including the number of arguments.
     infoHelper :: Rule -> String
     infoHelper (Comb str terms :- _) = str ++ "/" ++ show (length terms)
     infoHelper _ = ""
 
--- load program from file
+-- | Load program from file
 loadFile :: Strategy -> Prog -> String -> IO ()
 loadFile strat prog name =
   do
@@ -91,22 +95,21 @@ loadFile strat prog name =
     case file of
       Left  err  -> do
         putStrLn ("Error in file loading: " ++ err)
-        loop strat prog
+        loop strat prog -- ^ Continue loop with old program
       Right newProg -> do
         putStrLn "File successfully loaded."
-        loop strat newProg
+        loop strat newProg -- ^ Continue loop with newly loaded program
 
--- set seach strategy
+-- | Set search strategy
 setStrategy :: Strategy -> Prog -> String -> IO ()
-setStrategy strat prog ":set dfs" = loop strat prog
 setStrategy strat prog input =
   case input of
     "bfs" -> do
       putStrLn "Now using breadth first search strategy."
-      loop bfs prog
+      loop bfs prog -- ^ Continue loop with bfs.
     "dfs" -> do
       putStrLn "Now using depth first search strategy."
-      loop dfs prog
+      loop dfs prog -- ^ Continue loop with dfs.
     _ -> do
       putStrLn "Invalid Strategy! Use bfs or dfs."
-      loop strat prog
+      loop strat prog -- ^ Continue loop with old strategy

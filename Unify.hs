@@ -1,6 +1,5 @@
-module Unify (ds, unify, varInTerm) where
+module Unify (unify, varInTerm) where
 
-import Data.Maybe (isNothing)
 import Type
 import Subst
 
@@ -20,12 +19,11 @@ ds (Comb str1 terms1) (Comb str2 terms2) =
 dsList :: [Term] -> [Term] -> Maybe (Term, Term)
 dsList [] [] = Nothing
 dsList (t1:ts1) (t2:ts2) =
-		case ds t1 t2 of
-			Nothing -> dsList ts1 ts2
-			x				-> x
---  if isNothing (ds t1 t2)
---		then dsList ts1 ts2
---    else Just(t1, t2)
+  case ds t1 t2 of
+    Nothing -> dsList ts1 ts2
+    x       -> x
+dsList _ _ = error "Should not have happened!"
+-- TODO: fix tabs
 
 unify :: Term -> Term -> Maybe Subst
 unify term1 term2 = unifyHelper term1 term2 empty
@@ -39,20 +37,20 @@ unifyHelper term1 term2 subst =
     --
     Just (Var i, Var j) ->
       unifyHelper term1 term2 (compose (single i (Var j)) subst) -- ^ create a single substitutuion
-    Just (Comb str1 terms1, Comb str2 terms2) -> Nothing
-    Just (Var i, term@(Comb str terms)) ->
+    Just (Comb _ _, Comb _ _) -> Nothing
+    Just (Var i, term@(Comb _ terms)) ->
       if varInTerm i terms
         then Nothing -- TODO: disagreementSet takes this case
         else unifyHelper term1 term2 (compose (single i term) subst)
-    Just (term@(Comb str terms), Var i) ->
+    Just (term@(Comb _ terms), Var i) ->
       if varInTerm i terms
         then Nothing
         else unifyHelper term1 term2 (compose (single i term) subst)
 
 varInTerm :: VarIndex -> [Term] -> Bool
-varInTerm i [] = False
-varInTerm i ((Var index):xs) =
+varInTerm _ [] = False
+varInTerm i (Var index:xs) =
   if i == index
     then True
     else varInTerm i xs
-varInTerm i ((Comb str term):xs) = varInTerm i term || varInTerm i xs
+varInTerm i (Comb _ term:xs) = varInTerm i term || varInTerm i xs
