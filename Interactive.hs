@@ -1,5 +1,5 @@
-{-# LANGUAGE ViewPatterns #-}
-{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE ViewPatterns #-}        -- ^ Needed for stripPrefix in line 33,34
+{-# LANGUAGE ScopedTypeVariables #-} -- ^ Used in line 50 to get correct input
 
 module Interactive (main) where
 
